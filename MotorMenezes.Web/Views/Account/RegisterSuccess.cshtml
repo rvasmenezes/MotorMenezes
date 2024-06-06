@@ -1,0 +1,22 @@
+﻿@model MensagemDto
+@using MotorMenezes.Domain.Common.Dtos;
+
+@{
+    Layout = "~/Views/Shared/_LayoutLoginExternal.cshtml";
+    ViewData["Title"] = "Confirmação de E-mail";
+}
+
+<div class="row">
+    <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+        <div class="card card-signin my-3">
+            <div style="padding: 3.25rem;">
+                <div class="alert alert-info" role="alert">
+                    Cadastrado com sucesso! 
+                </div>
+                <div style="padding-top: 10px;">
+                    <a asp-action="Login">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,4 @@
+
+INSERT INTO public."CNHType"("Description") VALUES ('A');
+INSERT INTO public."CNHType"("Description") VALUES ('B');
+INSERT INTO public."CNHType"("Description") VALUES ('AB');

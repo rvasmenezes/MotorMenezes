@@ -1,0 +1,4 @@
+
+insert into "AspNetRoles" ("Id", "Name", "NormalizedName") values ('959364b1-f0fe-11ed-8b31-0242ac140004', 'Admin', 'ADMIN');
+insert into "AspNetRoles" ("Id", "Name", "NormalizedName") values ('d2017b50-84c1-45ed-ba00-9d4cf56bb998', 'Motorcyclist', 'MOTORCYCLIST');
+

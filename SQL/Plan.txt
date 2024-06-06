@@ -1,0 +1,15 @@
+
+INSERT INTO public."Plan"("Day", "CostPerDay", "PercentageFine")
+VALUES (7, 30, 20);
+
+INSERT INTO public."Plan"("Day", "CostPerDay", "PercentageFine")
+VALUES (15, 28, 40);
+
+INSERT INTO public."Plan"("Day", "CostPerDay", "PercentageFine")
+VALUES (30, 22, 0);
+
+INSERT INTO public."Plan"("Day", "CostPerDay", "PercentageFine")
+VALUES (45, 20, 0);
+
+INSERT INTO public."Plan"("Day", "CostPerDay", "PercentageFine")
+VALUES (50, 18, 0);

@@ -1,0 +1,42 @@
+version: "1"
+services:
+  seq:
+    image: datalust/seq:5.1
+    restart: always
+    ports:
+      - "5342:80"
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_LICENSE: "sua_chave_de_licenca_aqui"
+      SEQ_ADMIN_PASSWORD: "Senha@123"
+    volumes:
+      - seq_data:/var/lib/seq
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "admin"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "AluguelMoto_Dev"
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  seq_data:
+  rabbitmq_data:
+  postgres_data:

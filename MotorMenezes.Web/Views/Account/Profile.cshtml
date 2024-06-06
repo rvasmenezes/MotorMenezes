@@ -1,0 +1,195 @@
+﻿@model ProfileViewModel
+@using MotorMenezes.Web.Models.ViewModels.AccountViewModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutNovo.cshtml";
+    ViewData["ControllerVoltar"] = "Conta";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-md-12 mb-lg-0 mb-4">
+                <div class="card">
+                    <form class="frmSalvarPerfil" enctype="multipart/form-data">
+                        <div class="card-header pb-0 p-3">
+                            <div class="row">
+                                <h6 class="mb-0">Editar conta</h6>
+                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="Name"></label>
+                                                <input asp-for="Name" class="form-control" maxlength="30"/>
+                                                <span asp-validation-for="Name" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="Email"></label>
+                                                <input type="text" class="form-control" disabled value="@Model.Email" name="Email" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="BirthDate"></label>
+                                                <input asp-for="BirthDate" class="form-control" />
+                                                <span asp-validation-for="BirthDate" class="text-danger"></span>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                    <div class="row">                                        
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="CNPJ"></label>
+                                                <input asp-for="CNPJ" class="form-control cnpj" onkeyup="mascaraDeCNPJ(event)" />
+                                                <span asp-validation-for="CNPJ" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label asp-for="CNHTypeId" class="control-label"></label>
+                                            <select asp-for="CNHTypeId" asp-items="@(new SelectList(Model.CNHTypeList, "Id", "Description"))" name="CNHTypeId" class="form-control">
+                                                <option disabled selected> -- Selecione -- </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="CNHNumber"></label>
+                                                <input asp-for="CNHNumber" class="form-control" onkeyup="permitirSomenteNumeros(event)" />
+                                                <span asp-validation-for="CNHNumber" class="text-danger"></span>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                            <label asp-for="Archive" class="control-label"></label>
+                                            <input asp-for="Archive" class="form-control" type="file" accept=".png,.bmp" />
+                                            <span asp-validation-for="Archive" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            @if (Model.PossuiImagem)
+                                            {
+                                                <a class="downloadArquivo" style="cursor:pointer;" data-id="@Model.Id">
+                                                    <img src="~/ImagensIcone/Download24x24.png" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                                        title="Download" style="padding-top: 40px;" />
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mb-4 text-end">
+                                    <input type="submit" value="Salvar" class="btn bg-gradient-dark mb-0" />
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
+
+    <script type="text/javascript">
+
+        function mascaraDeCNPJ(event) {
+            let input = event.target;
+            input.value = cnpjMask(input.value);
+        }
+
+        function cnpjMask(value) {
+            if (!value) return "";
+            value = value.replace(/\D/g, '');
+            value = value.replace(/^(\d{2})(\d)/, "$1.$2");
+            value = value.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+            value = value.replace(/\.(\d{3})(\d)/, ".$1/$2");
+            value = value.replace(/(\d{4})(\d)/, "$1-$2");
+            return value;
+        }
+       
+        function permitirSomenteNumeros(event) {
+            let input = event.target;
+            input.value = input.value.replace(/\D/g, '');
+        }
+
+        $(".frmSalvarPerfil").submit(function (event) {
+            event.preventDefault();
+
+            var formData = new FormData($(this)[0]);
+
+            $.ajax({
+                url: "/Account",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function() {
+                    $('#loading').show();
+                },
+                complete: function() {
+                    $('#loading').hide();
+                },
+                success: function(response) {
+                    CriarAlerta("success", "Salvo com sucesso!");
+                },
+                error: function(erro) {
+                    if (erro.status == 400)
+                        CriarAlerta("danger", erro.responseText);
+                    else
+                        CriarAlerta("danger", "Erro inesperado!");
+                }
+            });
+        });
+
+        $('.downloadArquivo').click(function () {
+
+            var id = $(this).data("id");
+
+            $.ajax({
+                type: 'POST',
+                url: '/Account/DownloadCNH/' + id,
+                xhrFields: {
+                    responseType: 'arraybuffer'
+                },
+                beforeSend: function () {
+                    $('#loading').show();
+                },
+                complete: function () {
+                    $('#loading').hide();
+                },
+                success: function (data) {
+                    var blob = new Blob([data], { type: 'application/octet-stream' });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "CNH.jpg";
+                    link.click();
+                },
+                error: function (erro) {
+                    if (erro.status == 400)
+                        CriarAlerta("danger", erro.responseText);
+                    else
+                        CriarAlerta("danger", "Erro inesperado!");
+                }
+            });
+        });
+
+        $(function() {
+            $(".cnpj").mask('00.000.000/0000-00');
+        });
+
+    </script>
+}

@@ -1,0 +1,51 @@
+
+INSERT INTO public."AspNetUsers"(
+	"Id", 
+	"Name", 
+	"BirthDate", 
+	"RegisterDate", 
+	"CNPJ", 
+	"CNHNumber", 
+	"CNHTypeId", 
+	"UserName", 
+	"NormalizedUserName", 
+	"Email", 
+	"NormalizedEmail", 
+	"EmailConfirmed", 
+	"PasswordHash", 
+	"SecurityStamp", 
+	"ConcurrencyStamp", 
+	"PhoneNumber", 
+	"PhoneNumberConfirmed", 
+	"TwoFactorEnabled", 
+	"LockoutEnd", 
+	"LockoutEnabled", 
+	"AccessFailedCount", 
+	"PossuiImagem"
+) VALUES (
+	'fa132a88-b684-459f-8f9c-45a2d5d8c577', 
+	'Admin', 
+	null, 
+	'2024-06-04', 
+	null, 
+	null, 
+	null, 
+	'admin@gmail.com', 
+	'ADMIN@GMAIL.COM',
+	'admin@gmail.com', 
+	'ADMIN@GMAIL.COM', 
+	true, 
+	'AQAAAAIAAYagAAAAECje3n729c1P0PCY3gHBvpbVsRMfAsWobJymt6qeB05Quub/77QhhcXi2FUtXZBqaw==', 
+	'GX6GZ3R4YSMAAXH4P7RWB6OOENJ5VWMZ',
+	'9055ab97-a263-4914-bbc5-03192c987486', 
+	null, 
+	false, 
+	false, 
+	null, 
+	true, 
+	0, 
+	false
+);
+
+
+INSERT INTO public."AspNetUserRoles"("UserId", "RoleId") VALUES ('fa132a88-b684-459f-8f9c-45a2d5d8c577', '959364b1-f0fe-11ed-8b31-0242ac140004');
