@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MotorMenezes.Domain.Aggregates.MotorcycleAgg.Entities
 {
@@ -17,12 +16,15 @@ namespace MotorMenezes.Domain.Aggregates.MotorcycleAgg.Entities
         [StringLength(100)]
         public string Plate { get; set; }
 
+        public DateTime RegisterDate { get; set; }
+
         public Motorcycle(int year, string model, string plate)
         {
             Id = Guid.NewGuid().ToString();
             Year = year;
             Model = model;
             Plate = plate;
+            RegisterDate = DateTime.Now.ToUniversalTime();
         }
 
         public void SetPlate(string plate) => Plate = plate;

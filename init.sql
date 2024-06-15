@@ -220,7 +220,8 @@ CREATE TABLE public."Motorcycle" (
     "Id" character varying(255) NOT NULL,
     "Year" integer NOT NULL,
     "Model" character varying(100) NOT NULL,
-    "Plate" character varying(100) NOT NULL
+    "Plate" character varying(100) NOT NULL,
+	"RegisterDate" timestamp with time zone NOT NULL
 );
 
 
@@ -267,7 +268,7 @@ CREATE TABLE public."Rental" (
     "Id" character varying(255) NOT NULL,
     "UserId" character varying(255) NOT NULL,
     "PlanId" integer NOT NULL,
-    "RegiterDate" timestamp with time zone NOT NULL,
+    "RegisterDate" timestamp with time zone NOT NULL,
     "StartDate" timestamp with time zone NOT NULL,
     "EndDate" timestamp with time zone NOT NULL
 );
@@ -395,7 +396,7 @@ COPY public."Plan" ("Id", "Day", "CostPerDay", "PercentageFine") FROM stdin;
 -- Data for Name: Rental; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Rental" ("Id", "UserId", "PlanId", "RegiterDate", "StartDate", "EndDate") FROM stdin;
+COPY public."Rental" ("Id", "UserId", "PlanId", "RegisterDate", "StartDate", "EndDate") FROM stdin;
 \.
 
 

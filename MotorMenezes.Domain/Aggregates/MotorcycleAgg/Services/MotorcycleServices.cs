@@ -28,7 +28,7 @@ namespace MotorMenezes.Domain.Aggregates.MotorcycleAgg.Services
             => await _unitOfWork.MotorcycleRepository.GetAll()
                 .Where(x => string.IsNullOrEmpty(filterMotorcycleDto.Plate) || 
                             x.Plate.ToUpper().Contains(filterMotorcycleDto.Plate.ToUpper()))
-                .OrderByDescending(x => x.Id)
+                .OrderByDescending(x => x.RegisterDate)
                 .ToListAsync();
 
         public async Task<Motorcycle?> GetById(string id)
