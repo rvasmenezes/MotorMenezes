@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MotorMenezes.Core.Helpers;
 using MotorMenezes.Domain.Aggregates.MotorcycleAgg.Entities;
 using MotorMenezes.Domain.Aggregates.MotorcycleAgg.Interfaces;
 using RabbitMQ.Client;
@@ -19,14 +20,21 @@ namespace MotorMenezes.Domain.Host
         {
             _serviceProvider = serviceProvider;
 
-            var factory = new ConnectionFactory()
+            using (var scope = _serviceProvider.CreateScope())
             {
-                HostName = "localhost",
-                UserName = "admin",
-                Password = "admin"
-            };
+                var _globalVariables = scope.ServiceProvider.GetRequiredService<GlobalVariables>();
+                
+                var factory = new ConnectionFactory()
+                {
+                    HostName = _globalVariables.RabbitMQHostName,
+                    Port = _globalVariables.RabbitMQPort,
+                    UserName = _globalVariables.RabbitMQUserName,
+                    Password = _globalVariables.RabbitMQPassword
+                };
 
-            _connection = factory.CreateConnection();
+                _connection = factory.CreateConnection();
+            }
+
             _channel = _connection.CreateModel();
         }
 
@@ -34,12 +42,12 @@ namespace MotorMenezes.Domain.Host
         {
             stoppingToken.ThrowIfCancellationRequested();
 
-            ConsumeMessage("add_motorcycle", ProcessMessage);
+            ConsumeMessage("add_motorcycle", ProcessMessageAsync);
 
             return Task.CompletedTask;
         }
 
-        public void ConsumeMessage(string queueName, Action<string> handleMessage)
+        public void ConsumeMessage(string queueName, Func<string, Task> handleMessage)
         {
             _channel.QueueDeclare(queue: queueName,
                                  durable: false,
@@ -48,11 +56,11 @@ namespace MotorMenezes.Domain.Host
                                  arguments: null);
 
             var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += (model, ea) =>
+            consumer.Received += async (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                handleMessage(message);
+                await Task.Run(() => handleMessage(message));
             };
 
             _channel.BasicConsume(queue: queueName,
@@ -60,7 +68,7 @@ namespace MotorMenezes.Domain.Host
                                  consumer: consumer);
         }
 
-        private void ProcessMessage(string message)
+        private async Task ProcessMessageAsync(string message)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -69,7 +77,7 @@ namespace MotorMenezes.Domain.Host
                 var messageObject = JsonSerializer.Deserialize<Motorcycle>(message);
 
                 if (messageObject != null)
-                    _ = _motorcycleServices.Add(messageObject);
+                    await _motorcycleServices.Add(messageObject);
             }
         }
     }

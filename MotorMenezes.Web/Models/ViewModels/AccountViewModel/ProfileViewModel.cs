@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using MotorMenezes.Domain.Aggregates.CNHTypeAgg.Entity;
+using MotorMenezes.Web.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,13 +17,14 @@ namespace MotorMenezes.Web.Models.ViewModels.AccountViewModel
         public string Name { get; set; }
 
         [StringLength(18)]
-        [Required(ErrorMessage = "CNPJ é obrigatório!")]
+        [CNPJValidation]
         public string CNPJ { get; set; }
 
         [Display(Name = "Data de Aniversário")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         [DataType(DataType.Date)]
         [Required(ErrorMessage = "Data de nascimento é obrigatória!")]
+        [AgeRestriction(ErrorMessage = "Você deve ter mais de 18 anos.")]
         public DateTime? BirthDate { get; set; }
 
         [StringLength(15)]

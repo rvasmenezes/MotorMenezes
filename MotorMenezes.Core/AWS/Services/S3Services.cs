@@ -3,6 +3,7 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using MotorMenezes.Core.AWS.Interfaces;
 using MotorMenezes.Core.Helpers;
+using System.Drawing;
 using System.Net;
 
 namespace MotorMenezes.Core.AWS.Services
@@ -19,9 +20,17 @@ namespace MotorMenezes.Core.AWS.Services
 
         private async Task<AmazonS3Client> GetS3Client()
         {
-            var credentials = new Amazon.Runtime.BasicAWSCredentials(_globalVariables.S3AccessKeyId, _globalVariables.S3AccessKeySecret);
-            var region = Amazon.RegionEndpoint.SAEast1;
-            var s3Client = new AmazonS3Client(credentials, region);
+            var credentials = new AmazonS3Config
+            {
+                ServiceURL = _globalVariables.LocalStackURL,
+                ForcePathStyle = true
+            };
+
+            var s3Client = new AmazonS3Client("teste", "teste", credentials);
+
+            //var credentials = new Amazon.Runtime.BasicAWSCredentials(_globalVariables.S3AccessKeyId, _globalVariables.S3AccessKeySecret);
+            //var region = Amazon.RegionEndpoint.SAEast1;
+            //var s3Client = new AmazonS3Client(credentials, region);
             return await Task.FromResult(s3Client);
         }
 
@@ -31,6 +40,10 @@ namespace MotorMenezes.Core.AWS.Services
             {
                 using (var s3Client = await GetS3Client())
                 {
+
+                    if (!await DoesS3BucketExistAsync(s3Client, bucketName))
+                        await CreateS3BucketAsync(s3Client, bucketName);
+
                     var objectRequest = new PutObjectRequest()
                     {
                         BucketName = bucketName,
@@ -116,5 +129,40 @@ namespace MotorMenezes.Core.AWS.Services
 
         public string MontarUrlImagem(string bucketName, string regionEndpoint, string S3PathWithFilename)
             => "https://" + bucketName + ".s3." + regionEndpoint + ".amazonaws.com/" + S3PathWithFilename;
+
+        private async Task<bool> DoesS3BucketExistAsync(IAmazonS3 s3Client, string bucketName)
+        {
+            try
+            {
+                var response = await s3Client.ListBucketsAsync();
+                return response.Buckets.Any(b => string.Equals(b.BucketName, bucketName, StringComparison.OrdinalIgnoreCase));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private async Task CreateS3BucketAsync(IAmazonS3 s3Client, string bucketName)
+        {
+            try
+            {
+                var putBucketRequest = new PutBucketRequest
+                {
+                    BucketName = bucketName,
+                    UseClientRegion = true // Ensure the bucket is created in the client's region
+                };
+
+                var response = await s3Client.PutBucketAsync(putBucketRequest);
+            }
+            catch (AmazonS3Exception ex)
+            {
+                throw new Exception($"Erro ao criar o bucket S3 '{bucketName}'. Mensagem: {ex.Message}.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro não previsto ao criar o bucket S3 '{bucketName}'. Mensagem: {ex.Message}.", ex);
+            }
+        }
     }
 }

@@ -63,9 +63,9 @@ namespace MotorMenezes.Domain.Aggregates.UserAgg.Services
 
             var user = await _unitOfWork.UsuarioRepository.GetAll().Where(x => x.Email == request.Email).FirstAsync();
 
-            if (await _userManager.IsInRoleAsync(user, ProfileEnum.Admin.ToString()))
-                loginResponse.Rota = ConstantMessages.ROUTE_MOTORCYCLE;
-            else if (await _userManager.IsInRoleAsync(user, ProfileEnum.Motorcyclist.ToString()))
+            loginResponse.Rota = ConstantMessages.ROUTE_MOTORCYCLE;
+    
+            if (await _userManager.IsInRoleAsync(user, ProfileEnum.Motorcyclist.ToString()))
                 loginResponse.Rota = ConstantMessages.ROUTE_ACCOUNT;
 
             loginResponse.UserId = user.Id;

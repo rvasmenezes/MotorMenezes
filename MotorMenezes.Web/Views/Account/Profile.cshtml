@@ -11,7 +11,7 @@
         <div class="row">
             <div class="col-md-12 mb-lg-0 mb-4">
                 <div class="card">
-                    <form class="frmSalvarPerfil" enctype="multipart/form-data">
+                    <form class="frmSalvarPerfil" enctype="multipart/form-data" action="/Account/Update" asp-validation-summary="ModelOnly">
                         <div class="card-header pb-0 p-3">
                             <div class="row">
                                 <h6 class="mb-0">Editar conta</h6>
@@ -55,6 +55,7 @@
                                             <select asp-for="CNHTypeId" asp-items="@(new SelectList(Model.CNHTypeList, "Id", "Description"))" name="CNHTypeId" class="form-control">
                                                 <option disabled selected> -- Selecione -- </option>
                                             </select>
+                                            <span asp-validation-for="CNHTypeId" class="text-danger"></span>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
@@ -132,7 +133,7 @@
             var formData = new FormData($(this)[0]);
 
             $.ajax({
-                url: "/Account",
+                url: "/Account/Update",
                 type: "POST",
                 data: formData,
                 processData: false,

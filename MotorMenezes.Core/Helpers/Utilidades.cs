@@ -10,15 +10,15 @@ namespace MotorMenezes.Core.Helpers
             return localDateTime.ToUniversalTime();
         }
 
-        public static bool ValidarPlaca(string placa)
+        public static List<int> GerarListaAnos(int quantidadeAnos)
         {
-            // Padrão de placa brasileira: ABC1D23 (três letras, um número, três letras)
-            string pattern = @"^[A-Z]{3}\d{1}[A-Z0-9]{1}\d{2}$";
+            int anoAtual = DateTime.Now.Year;
+            List<int> listaAnos = new();
 
-            // Ignora case (maiusculas ou minusculas)
-            Regex regex = new(pattern, RegexOptions.IgnoreCase);
+            for (int i = 0; i <= quantidadeAnos; i++)
+                listaAnos.Add(anoAtual - i);
 
-            return regex.IsMatch(placa);
+            return listaAnos;
         }
     }
 }

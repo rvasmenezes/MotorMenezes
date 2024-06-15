@@ -26,8 +26,4 @@ RUN dotnet publish "./MotorMenezes.Web.csproj" -c $BUILD_CONFIGURATION -o /app/p
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-
-ARG ASPNETCORE_ENVIRONMENT=Production
-ENV ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
-
 ENTRYPOINT ["dotnet", "MotorMenezes.Web.dll"]

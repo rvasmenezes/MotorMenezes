@@ -28,6 +28,6 @@ namespace MotorMenezes.Domain.Aggregates.UserAgg.Requests
         [Display(Name = "E-mail")]
         public string? Email { get; set; }
 
-        public IFormFile? Archive { get; set; }
+        public required IFormFile Archive { get; set; }
     }
 }

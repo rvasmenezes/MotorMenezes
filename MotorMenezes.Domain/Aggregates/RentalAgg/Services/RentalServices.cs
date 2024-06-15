@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MotorMenezes.Core.ApplicationContext;
-using MotorMenezes.Domain.Aggregates.CNHTypeAgg.Enums;
 using MotorMenezes.Domain.Aggregates.RentalAgg.Entities;
 using MotorMenezes.Domain.Aggregates.RentalAgg.Interfaces;
 using MotorMenezes.Domain.Aggregates.RentalAgg.Requests;

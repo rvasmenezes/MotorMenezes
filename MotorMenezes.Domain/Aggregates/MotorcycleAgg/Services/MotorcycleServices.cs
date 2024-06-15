@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MotorMenezes.Core.Helpers;
 using MotorMenezes.Core.RabbitMQ;
 using MotorMenezes.Domain.Aggregates.MotorcycleAgg.Dtos;
 using MotorMenezes.Domain.Aggregates.MotorcycleAgg.Entities;
@@ -32,8 +31,8 @@ namespace MotorMenezes.Domain.Aggregates.MotorcycleAgg.Services
                 .OrderByDescending(x => x.Id)
                 .ToListAsync();
 
-        public async Task<Motorcycle?> GetById(int id)
-            => await _unitOfWork.MotorcycleRepository.GetEntityByIdAsync(id);
+        public async Task<Motorcycle?> GetById(string id)
+            => await _unitOfWork.MotorcycleRepository.GetAll().Where(x => x.Id == id).FirstAsync();
 
         public async Task Add(Motorcycle motorcycle)
         {
@@ -45,27 +44,9 @@ namespace MotorMenezes.Domain.Aggregates.MotorcycleAgg.Services
         {
             var response = new ResponseCreateDto<Motorcycle>();
 
-            if (string.IsNullOrEmpty(request.Model))
-            {
-                response.AddWarningValidation(ConstantMessages.MODELO_OBRIGATORIO);
-                return response;
-            }
-
-            if (string.IsNullOrEmpty(request.Plate) || !Utilidades.ValidarPlaca(request.Plate))
-            {
-                response.AddWarningValidation(ConstantMessages.VEICULO_PLACA_INVALIDA);
-                return response;
-            }
-
             if(await _unitOfWork.MotorcycleRepository.GetAll().AnyAsync(x => x.Plate.Contains(request.Plate)))
             {
                 response.AddWarningValidation(ConstantMessages.PLACA_CADASTRADA);
-                return response;
-            }
-
-            if (request.Year < 2000 || request.Year > DateTime.Now.AddYears(1).Year)
-            {
-                response.AddWarningValidation("O ano deve ser entre 2000 e " + DateTime.Now.AddYears(1).Year);
                 return response;
             }
 
@@ -86,12 +67,6 @@ namespace MotorMenezes.Domain.Aggregates.MotorcycleAgg.Services
         {
             var response = new ResponseCreateDto<Motorcycle>();
 
-            if (!Utilidades.ValidarPlaca(request.Plate))
-            {
-                response.AddWarningValidation(ConstantMessages.VEICULO_PLACA_INVALIDA);
-                return response;
-            }
-
             if (await _unitOfWork.MotorcycleRepository.GetAll()
                 .AnyAsync(x => x.Plate.Contains(request.Plate) && x.Id != request.Id))
             {
@@ -111,7 +86,7 @@ namespace MotorMenezes.Domain.Aggregates.MotorcycleAgg.Services
             return response;
         }
 
-        public async Task<ResponseCreateDto<Motorcycle>> Delete(int id)
+        public async Task<ResponseCreateDto<Motorcycle>> Delete(string id)
         {
             var response = new ResponseCreateDto<Motorcycle>();
 

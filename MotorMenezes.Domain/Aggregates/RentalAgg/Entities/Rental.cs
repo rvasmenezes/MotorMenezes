@@ -1,5 +1,4 @@
-﻿using MotorMenezes.Core.Helpers;
-using MotorMenezes.Domain.Aggregates.PlanAgg.Entites;
+﻿using MotorMenezes.Domain.Aggregates.PlanAgg.Entites;
 using MotorMenezes.Domain.Aggregates.UserAgg.Entities;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,7 +7,8 @@ namespace MotorMenezes.Domain.Aggregates.RentalAgg.Entities
     public class Rental
     {
         [Key]
-        public int Id { get; set; }
+        [StringLength(255)]
+        public string Id { get; set; }
 
         [StringLength(255)]
         public string UserId { get; set; }
@@ -23,6 +23,7 @@ namespace MotorMenezes.Domain.Aggregates.RentalAgg.Entities
 
         public Rental(string userId, int planId, DateTime endDate)
         {
+            Id = Guid.NewGuid().ToString();
             UserId = userId;
             PlanId = planId;
             RegiterDate = DateTime.Now.ToUniversalTime();

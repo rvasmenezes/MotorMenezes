@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MotorMenezes.Domain.Aggregates.MotorcycleAgg.Entities
 {
     public class Motorcycle
     {
         [Key]
-        public int Id { get; set; }
+        [StringLength(255)]
+        public string Id { get; set; }
 
         public int Year { get; set; }
 
@@ -17,6 +19,7 @@ namespace MotorMenezes.Domain.Aggregates.MotorcycleAgg.Entities
 
         public Motorcycle(int year, string model, string plate)
         {
+            Id = Guid.NewGuid().ToString();
             Year = year;
             Model = model;
             Plate = plate;

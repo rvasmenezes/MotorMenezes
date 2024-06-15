@@ -13,7 +13,7 @@ services:
       - seq_data:/var/lib/seq
 
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:management
     restart: always
     ports:
       - "5672:5672"
@@ -32,11 +32,68 @@ services:
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "AluguelMoto_Dev"
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    command: ["postgres", "-c", "log_statement=all"]
+
+  db-init:
+    image: postgres:13
+    depends_on:
+      - postgres
+    environment:
+      PGPASSWORD: postgres
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    entrypoint: |
+      bash -c "
+      until pg_isready -h postgres -U postgres; do
+        echo 'Waiting for PostgreSQL to be ready...'
+        sleep 1
+      done
+      psql -h postgres -U postgres -d AluguelMoto_Dev -f /docker-entrypoint-initdb.d/init.sql
+      "
+
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=us-east-1
+      - TMPDIR=/tmp/localstack_tmp
+    volumes:
+      - "localstack_tmp:/tmp/localstack_tmp"
+
+  aws-cli:
+    image: amazon/aws-cli:latest
+    volumes:
+      - localstack_tmp:/tmp/localstack_tmp
+    entrypoint: ["/bin/sh", "-c", "while sleep 1000; do :; done"]
+
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5532:8080"
+      - "443:443"
+    depends_on:
+      - rabbitmq
+      - postgres
+      - db-init
+      - seq
+      - localstack
+      - aws-cli
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      AWS__SERVICEURL: "http://localstack:4566"
+      AWS_ACCESS_KEY_ID: "test"
+      AWS_SECRET_ACCESS_KEY: "test"
 
 volumes:
   seq_data:
   rabbitmq_data:
   postgres_data:
+  localstack_tmp:

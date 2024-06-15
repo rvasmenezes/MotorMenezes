@@ -115,13 +115,13 @@ namespace MotorMenezes.Web.Controllers
         }
 
         [HttpPost]
-        [Route("[controller]")]
+        [Route("[controller]/Update")]
         [Authorize]
-        public async Task<IActionResult> Profile(UserRequest request)
+        public async Task<IActionResult> Profile(ProfileViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                var response = await _userServices.Update(request);
+                var response = await _userServices.Update(_mapper.Map<UserRequest>(viewModel));
 
                 if (!response.ValidationResult.IsValid)
                     return BadRequest(response.ValidationResult.Errors.FirstOrDefault().ErrorMessage);
@@ -129,7 +129,8 @@ namespace MotorMenezes.Web.Controllers
                 return Ok();
             }
 
-            return BadRequest("Preencha os campos corretamente!");
+            var modelErrors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            return BadRequest(string.Join("<br>", modelErrors));
         }
 
         [HttpPost]

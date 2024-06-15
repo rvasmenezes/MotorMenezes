@@ -8,11 +8,11 @@ namespace MotorMenezes.Domain.Aggregates.MotorcycleAgg.Interfaces
     public interface IMotorcycleServices
     {
         Task<List<Motorcycle>> GetList(FilterMotorcycleDto filterMotorcycleDto);
-        Task<Motorcycle?> GetById(int id);
+        Task<Motorcycle?> GetById(string id);
         Task Add(Motorcycle motorcycle);
         Task<ResponseCreateDto<Motorcycle>> SendMessageAdd(CreateOrEditMotorcycleRequest request);
         Task<ResponseCreateDto<Motorcycle>> Update(CreateOrEditMotorcycleRequest request);
-        Task<ResponseCreateDto<Motorcycle>> Delete(int id);
+        Task<ResponseCreateDto<Motorcycle>> Delete(string id);
     }
 }
 

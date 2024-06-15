@@ -16,8 +16,4 @@
     <ProjectReference Include="..\MotorMenezes.Domain\MotorMenezes.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>
